@@ -15,8 +15,8 @@ class Graph():
         random.seed(98124)
         i = 0
         while i < self.num_vertices:
-            x = random.randint(1, 9) 
-            y = random.randint(1, 9)
+            x = random.randint(1, 99) 
+            y = random.randint(1, 99)
             weight = random.randint(1, 100)
             tpl = (x, y, weight)
             

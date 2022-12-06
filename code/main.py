@@ -1,26 +1,25 @@
 import time
 from graph import Graph
-from search import exhaustiveSearch
-from search import greedy
+from search import RandomSearch
 from search import printResults
 import csv
 
 
 def writeCSV(dens):
 
-    with open('exhaustiveSearch'+str(dens)+'.csv', 'w', newline='') as file:
+    with open('RandomSearch'+str(dens)+'.csv', 'w', newline='') as file:
     #with open('greedy'+str(dens)+'.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['vertices', 'edges', 'Density','Comparisons', 'Divisions', 'Additions' , 'Solutions', 'Time', 'resposta', 'peso'])
 
-        for i in range(1, 22):
-            print(i)
+        for i in range(1, 101):
+            print("vertices", i)
             g = Graph(i, dens)
             g.buildGraph()
             #g.showGraph()
 
             start = time.time()
-            iset = exhaustiveSearch(g)
+            iset = RandomSearch(g)
             #iset = greedy(g)
             end = time.time()
 
@@ -28,4 +27,13 @@ def writeCSV(dens):
 
             writer.writerow([g.num_vertices, g.num_edges, g.density,counts[0], counts[1], counts[2], counts[3], end - start, iset, counts[4]])
 
-writeCSV(50)
+writeCSV(0)
+
+# g = Graph(100, 0)
+# g.buildGraph()
+# #g.showGraph()
+# start = time.time()
+# iset = RandomSearch(g)
+# end = time.time()
+
+# counts=printResults(iset, g)

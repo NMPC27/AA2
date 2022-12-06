@@ -1,5 +1,6 @@
 from itertools import combinations
 from typing import Set
+import time
 
 from numpy import minimum
 import random
@@ -10,8 +11,8 @@ num_divisions = 0
 num_additions = 0
 num_solutions = 0
 
-# exhaustive search algorithm
-def exhaustiveSearch(g):
+# random search algorithm
+def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o prof diz que era melhor
     random.seed(98124)
     global num_comparisons
     global num_solutions
@@ -23,40 +24,70 @@ def exhaustiveSearch(g):
     num_solutions = 0
     num_additions = 0
 
-    subsets_list = []
-
-    for i in range(1, g.num_vertices+1): # começa no 1 porque o conjunto vazio nao é um conjunto dominante
-
-        for subset in combinations(range(g.num_vertices), i):
-            subset = list(subset)
-            subsets_list.append(subset)
-            num_solutions += 1 # soluçoes/configuraçoes count
-
-
-
-    #! atençao que se o valor de len(subsets_list) for muito baixo pode dar 0 e dps da asneira
-
-    if len(subsets_list) < 10:
-        num_sol_find = len(subsets_list)
-    else:
-        num_sol_find = int( len(subsets_list) * 0.1) # vamos explorar 40% das soluçoes
-
-    solutions_explored=[]
-
-    for i in range(num_sol_find):
-
-        idx=random.randint(0, len(subsets_list)-1)
-
-        while idx in solutions_explored:
-            idx=random.randint(0, len(subsets_list)-1)
-
-        solutions_explored.append(idx)
-
-        if isDominatingSet(g, subsets_list[idx]):            
-            dominatingSet.append(subsets_list[idx])
-            num_additions+= 1 
-            totalWeights.append(sum([g.vertices[v][2] for v in subsets_list[idx]])) # soma todos os pesos
+    per_subsets = 0.10
     
+    num_ver = g.num_vertices
+    if g.num_vertices > 15:
+        num_ver = int(g.num_vertices/2)
+        
+    firstTime = True
+    while num_ver>0:
+        
+        nSubsets=int( (pow(2, g.num_vertices) -1) * per_subsets ) 
+        if nSubsets<75:
+            nSubsets=75 #! ver este numero
+
+        if nSubsets>10000:
+            nSubsets=10000
+
+        # start= time.time()
+
+        foundDominatingSet=False
+        for set in range(nSubsets):#fazer nSubsets subsets de num_ver vertices
+
+            sset = random.sample(range(g.num_vertices), num_ver)
+
+            if isDominatingSet(g, sset):   
+                # print("num_ver=", num_ver)
+                # print(set,"/",nSubsets)
+                # input()
+                foundDominatingSet=True
+                dominatingSet.append(sset)
+                num_additions+= 1 
+                totalWeights.append(sum([g.vertices[v][2] for v in sset])) 
+                break
+
+        if not foundDominatingSet and firstTime:
+            num_ver=g.num_vertices # se nao encontrar um conjunto dominante com metade dos vertices, entao tenta com todos os vertices
+            continue
+        
+        if not foundDominatingSet or num_ver==1:
+
+            # end= time.time()
+            # print('time1:', end-start)
+            # start= time.time()
+
+            nSubsets=10000*num_ver
+            for set in range(nSubsets):#fazer nSubsets subsets de num_ver vertices
+
+                if num_ver==g.num_vertices:
+                    subset = random.sample(range(g.num_vertices), num_ver)
+                else:
+                    subset = random.sample(range(g.num_vertices), (num_ver+1))
+                
+                if isDominatingSet(g, subset): 
+                    dominatingSet.append(subset)
+                    num_additions+= 1 
+                    totalWeights.append(sum([g.vertices[v][2] for v in subset])) 
+            
+            break
+
+        num_ver-=1
+        firstTime=False
+
+    # end= time.time()
+    # print('time2:', end-start)
+
     minimum = min(totalWeights) # encontra o set com menor peso
     idx = totalWeights.index(minimum) 
     
@@ -91,45 +122,7 @@ def isDominatingSet(g, subset):
     
                 
 
-# greedy search algorithm
-def greedy(g):
-    global num_comparisons
-    global num_divisions
-    global num_solutions
 
-    num_comparisons = 0
-    num_divisions = 0
-    num_solutions = 0
-
-    ratios = []
-    
-    for i in range(0, g.num_vertices):
-        vertex = g.vertices[i]
-        edges = g.adjacencyMatrix[i].count(1)  # grau do vertice
-        num_divisions += 1
-        tpl = (i, vertex[2]/edges) if edges != 0 else (i, 0) # racio entre peso e grau do vertice
-        ratios.append(tpl)
-
-
-    adjacentes = set()
-    ans = set()
-    while ratios != [] and len(adjacentes)<g.num_vertices:
-        num_comparisons += 1
-        
-        vertex = min(ratios, key=lambda x: x[1]) #escolher o vertice com menor racio (eu quero + grau por menos peso - ou seja o menor ratio)
-        idx_vertex = vertex[0]
-
-        adjacentes.add(idx_vertex) #vertice atual
-        ans.add(idx_vertex) #vertice atual
-        for v in range(g.num_vertices):
-            num_comparisons += 1
-            if g.isAdjacent(idx_vertex, v):
-                adjacentes.add(v) #vertices adjacentes ao vertice atual
-
-        ratios.remove(vertex)
-
-    num_solutions += 1
-    return ans
 
 def printResults(iset, g):
     global num_comparisons
