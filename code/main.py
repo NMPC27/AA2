@@ -20,14 +20,13 @@ def writeCSV(dens):
 
             start = time.time()
             iset = RandomSearch(g)
-            #iset = greedy(g)
             end = time.time()
 
             counts=printResults(iset, g)
 
             writer.writerow([g.num_vertices, g.num_edges, g.density,counts[0], counts[1], counts[2], counts[3], end - start, iset, counts[4]])
 
-writeCSV(0)
+writeCSV(100)
 
 # g = Graph(100, 0)
 # g.buildGraph()

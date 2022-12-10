@@ -1,8 +1,4 @@
-from itertools import combinations
-from typing import Set
-import time
 
-from numpy import minimum
 import random
 
 
@@ -32,21 +28,34 @@ def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o 
         
     firstTime = True
     while num_ver>0:
+
+        
         
         nSubsets=int( (pow(2, g.num_vertices) -1) * per_subsets ) 
+        num_comparisons += 1
         if nSubsets<75:
-            nSubsets=75 #! ver este numero
+            nSubsets=75 
 
+        num_comparisons += 1
         if nSubsets>10000:
             nSubsets=10000
 
         # start= time.time()
 
+        vistos = set()
+
         foundDominatingSet=False
-        for set in range(nSubsets):#fazer nSubsets subsets de num_ver vertices
+        for set2 in range(nSubsets):#fazer nSubsets subsets de num_ver vertices
 
             sset = random.sample(range(g.num_vertices), num_ver)
 
+            num_comparisons += 1
+            if str(sset) in vistos:
+                continue
+
+            vistos.add(str(sset))
+
+            num_comparisons += 1
             if isDominatingSet(g, sset):   
                 # print("num_ver=", num_ver)
                 # print(set,"/",nSubsets)
@@ -57,24 +66,36 @@ def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o 
                 totalWeights.append(sum([g.vertices[v][2] for v in sset])) 
                 break
 
+        num_comparisons += 1
         if not foundDominatingSet and firstTime:
             num_ver=g.num_vertices # se nao encontrar um conjunto dominante com metade dos vertices, entao tenta com todos os vertices
             continue
         
+        num_comparisons += 1
         if not foundDominatingSet or num_ver==1:
 
             # end= time.time()
             # print('time1:', end-start)
             # start= time.time()
 
-            nSubsets=10000*num_ver
-            for set in range(nSubsets):#fazer nSubsets subsets de num_ver vertices
+            vistos2 = set()
 
+            nSubsets=10000*num_ver
+            for set3 in range(nSubsets):#fazer nSubsets subsets de num_ver vertices
+
+                num_comparisons += 1
                 if num_ver==g.num_vertices:
                     subset = random.sample(range(g.num_vertices), num_ver)
                 else:
                     subset = random.sample(range(g.num_vertices), (num_ver+1))
-                
+
+                num_comparisons += 1
+                if str(subset) in vistos2:
+                    continue
+
+                vistos2.add(str(subset))
+
+                num_comparisons += 1
                 if isDominatingSet(g, subset): 
                     dominatingSet.append(subset)
                     num_additions+= 1 
