@@ -72,7 +72,7 @@ def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o 
             continue
         
         num_comparisons += 1
-        if not foundDominatingSet or num_ver==1:
+        if not foundDominatingSet or num_ver==0:
 
             # end= time.time()
             # print('time1:', end-start)
