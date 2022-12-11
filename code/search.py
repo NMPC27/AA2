@@ -8,7 +8,7 @@ num_additions = 0
 num_solutions = 0
 
 # random search algorithm
-def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o prof diz que era melhor
+def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao -> prof diz que era melhor
     random.seed(98124)
     global num_comparisons
     global num_solutions
@@ -40,8 +40,6 @@ def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o 
         if nSubsets>10000:
             nSubsets=10000
 
-        # start= time.time()
-
         vistos = set()
 
         foundDominatingSet=False
@@ -57,9 +55,6 @@ def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o 
 
             num_comparisons += 1
             if isDominatingSet(g, sset):   
-                # print("num_ver=", num_ver)
-                # print(set,"/",nSubsets)
-                # input()
                 foundDominatingSet=True
                 dominatingSet.append(sset)
                 num_additions+= 1 
@@ -73,10 +68,6 @@ def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o 
         
         num_comparisons += 1
         if not foundDominatingSet or num_ver==0:
-
-            # end= time.time()
-            # print('time1:', end-start)
-            # start= time.time()
 
             vistos2 = set()
 
@@ -105,9 +96,6 @@ def RandomSearch(g):#! diminuir o numero de vertices se encontrar uma solucao o 
 
         num_ver-=1
         firstTime=False
-
-    # end= time.time()
-    # print('time2:', end-start)
 
     minimum = min(totalWeights) # encontra o set com menor peso
     idx = totalWeights.index(minimum) 
